@@ -1,15 +1,26 @@
 from os.path import basename
 import requests
+from bs4 import BeautifulSoup
 
-urls = [
-    'https://www.cnlopb.ca/wp-content/uploads/hebstats/heb_oil_2017.pdf',
-    'https://www.cnlopb.ca/wp-content/uploads/hebstats/heb_oil_2018.pdf',
-    'https://www.cnlopb.ca/wp-content/uploads/hebstats/heb_oil_2019.pdf',
-    'https://www.cnlopb.ca/wp-content/uploads/hebstats/heb_oil_2020.pdf',
-    'https://www.cnlopb.ca/wp-content/uploads/hebstats/heb_oil_2021.pdf'
-    ]
+url = 'https://www.cnlopb.ca/information/statistics/#rm'
 
-for url in urls:
-    req = requests.get(url)
-    with open(basename(url), 'wb') as file:
+response = requests.get(url)
+soup = BeautifulSoup(response.text, 'html.parser')
+
+
+sources = []
+for link in soup.find_all('a'):
+    if 'pdf' in link['href']:
+        sources.append(link.get('href'))
+
+
+websites = []
+for source in sources:
+    websites = list(filter(lambda source: (source.split('/')[-2] == 'hebstats' or source.split('/')[-2] == 'hibstats'
+                                           or source.split('/')[-2] == 'nastats' or source.split('/')[-2] == 'tnstats'
+                                            or source.split('/')[-2] == 'wrstats'), sources))
+
+for website in websites:
+    req = requests.get(website)
+    with open(basename(website), 'wb') as file:
         file.write(req.content)
