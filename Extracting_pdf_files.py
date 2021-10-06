@@ -17,3 +17,8 @@ def extract_tables(field_dir,year):
             return all_tables
 
 extract_tables('heb','2017')
+
+n_path = 'hib_oil_2021.pdf-page-1-table-1.csv'
+
+data = pd.read_csv(n_path,delimiter=',',header='infer')
+data.fillna({'Well Name':'HIB-B-016-001','Year':2021,'Month':0}).dropna()
