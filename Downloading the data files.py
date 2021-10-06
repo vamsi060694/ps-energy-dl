@@ -7,18 +7,22 @@ url = 'https://www.cnlopb.ca/information/statistics/#rm'
 response = requests.get(url)
 soup = BeautifulSoup(response.text, 'html.parser')
 
-
 sources = []
 for link in soup.find_all('a'):
     if 'pdf' in link['href']:
         sources.append(link.get('href'))
 
+names = []
+reference = ['hebstats', 'hibstats', 'nastats', 'wrstats', 'tnstats']
 
-websites = []
-for source in sources:
-    websites = list(filter(lambda source: (source.split('/')[-2] == 'hebstats' or source.split('/')[-2] == 'hibstats'
-                                           or source.split('/')[-2] == 'nastats' or source.split('/')[-2] == 'tnstats'
-                                            or source.split('/')[-2] == 'wrstats'), sources))
+
+def get_urls(sources, reference):
+    names = [n for n in sources if
+             any(m in n for m in reference)]
+    return names
+
+
+websites = get_urls(sources, reference)
 
 for website in websites:
     req = requests.get(website)
