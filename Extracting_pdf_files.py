@@ -21,12 +21,3 @@ def extract_tables(field_dir):
 
 extract_tables('hebron')
 
-d_path = 'hib_oil_2021.pdf-page-1-table-1.csv'
-
-
-def reading_to_df(field_dir):
-    field_dir_path = os.path.join(current_dir, field_dir)
-
-    data = pd.read_csv(d_path, delimiter=',', header='infer')
-    data.fillna({'Well Name': 'HIB-B-016-001', 'Year': 2021, 'Month': 0}).dropna(). \
-        rename(columns={'Well Name': 'Well_names'})
