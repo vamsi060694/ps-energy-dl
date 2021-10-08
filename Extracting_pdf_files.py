@@ -1,6 +1,7 @@
 import os
 
-import camelot
+# import camelot
+# import sqlite3
 
 #import pandas as pd
 
@@ -14,7 +15,7 @@ for path, dirs, files in os.walk(field_dir_path):
         filename = os.path.join(path, f)
         with open(filename, 'r'):
             print(filename)
-            tables = camelot.read_pdf(filename, pages='all',
-                                      flavour='stream')
+            tables = camelot.read_pdf(filename, pages='all',flavour='stream')
+
             print(type(tables))
-            all_tables = tables.export(f'{myfile}.csv')
+            all_tables = tables.export(f'{filename}.csv')
