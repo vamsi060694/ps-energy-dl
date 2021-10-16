@@ -12,10 +12,9 @@ filters = os.getenv('REFERENCE').split(',')
 
 
 def all_years(data_path, field):
-    requirement = str(input('Do you want to download all years:'))
-    yes = os.getenv('ALL_YEARS')
+    answer = os.getenv('ALL_YEARS')
 
-    if requirement == yes:
+    if answer == 'yes':
         for source in sources:
             req = requests.get(f'{url}/{source}')
             with open(basename(f'{data_path}\\{field}\\{source}'), 'wb') as file:
