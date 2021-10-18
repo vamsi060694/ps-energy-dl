@@ -128,9 +128,10 @@ dmypy.json
 # Pyre type checker
 .pyre/
 /hebron/
-/data/hebron_pdf/
-/data/hibernia_pdf/
-/data/methyst_north_pdf/
-/data/ova_terra_pdf/
-/data/white_ross_pdf/
-/data/
+/data_folder/hebron_pdf/
+/data_folder/hibernia_pdf/
+/data_folder/methyst_north_pdf/
+/data_folder/ova_terra_pdf/
+/data_folder/white_ross_pdf/
+/data_folder/
+/data_folder/
