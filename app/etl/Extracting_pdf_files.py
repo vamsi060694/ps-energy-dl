@@ -1,11 +1,9 @@
 #import camelot
 import os
-import logging
+from app.utils.logging_init import init_logger
 from dotenv import load_dotenv
 
-logging.basicConfig(filename='extraction.log',level=logging.INFO,
-                    format='%(asctime)s %(message)s')
-
+logger = init_logger()
 
 load_dotenv()
 
@@ -15,7 +13,7 @@ data_path = os.path.join(folder_path,'data_folder')
 print(data_path)
 
 directories = os.listdir(data_path)
-logging.info(directories)
+logger.info(directories)
 
 # def extract(directories, data_path):
 #     for directory in directories:
