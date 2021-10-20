@@ -3,6 +3,7 @@ import camelot
 import numpy as np
 import pandas as pd
 
+
 path = 'C:\workspace\ps-energy-dl\data_folder\hibernia'
 
 
@@ -23,15 +24,16 @@ def extraction(path):
                 f_data.columns = ['Well Name', 'Year', 'Month', 'Oil_(m³)', 'Gas_(10³m³)', 'Water_(m³)']
             else:
                 f_data.columns = ['Well Name', 'Year', 'Month', 'Total', 'Oil_(m³)', 'Gas_(10³m³)', 'Water_(m³)']
-            for i in range(1,num):
-                temp_df = tables[i].df
-                index = temp_df.index[temp_df.iloc[:,0] == 'Well Name'][0]
-                temp_df = temp_df[index + 1:]
             all_tables = pd.DataFrame()
             for i in range(num):
-                temp_df = (tables[i].df)
+                temp_df = tables[i].df
                 all_tables = pd.concat([all_tables, temp_df])
-                print(all_tables)
+            print(all_tables)
+
+
+
+
+
 
 
             # if d_len == 7:
@@ -50,7 +52,6 @@ def extraction(path):
             # # df1 = all_tables.dropna()
             # # print(df1)
         #
-        # return num
-
-
+        # return nu#
+#
 extraction(path)
