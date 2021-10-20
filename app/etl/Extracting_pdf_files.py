@@ -10,9 +10,9 @@ logging.basicConfig(filename='extraction.log',level=logging.INFO,
 load_dotenv()
 
 folder_path = os.getenv('FOLDER_PATH')
-print(folder_path)
+logging.info(folder_path)
 data_path = os.path.join(folder_path,'data_folder')
-print(data_path)
+logging.info(data_path)
 
 directories = os.listdir(data_path)
 logging.info(directories)
