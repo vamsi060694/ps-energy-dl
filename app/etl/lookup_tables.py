@@ -48,7 +48,6 @@ well_table = sqlalchemy.Table('well_table', meta,
                               sqlalchemy.Column('date_created', sqlalchemy.DateTime(), default=dt.date.today()))
 meta.create_all(energy_connection)
 for i in well_list:
-
     if i not in well_table.well_name.values:
         query = f"INSERT INTO well_table(well_name) VALUES ('{i}')"
         energy_connection.execute(query)
