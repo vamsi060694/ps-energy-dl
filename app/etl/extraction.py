@@ -46,7 +46,7 @@ for filter in filters:
     field = json.loads(os.getenv('FIELDS'))[filter]
     for item in field:
 
-        def extraction(data_path, field):
+        def extraction(data_path):
             final_data = pd.DataFrame()
             for path, dirs, files in os.walk(data_path):
                 for file in files:
@@ -89,11 +89,7 @@ for filter in filters:
                     cleaning_data = final_cleaning_data
                     print(cleaning_data)
                     final_data = pd.concat([final_data, cleaning_data])
-                    if not os.path.isdir(data_path + '//' + f'{field}.csv'):
-                        os.mkdir(f'{field}.csv')
-                        os.chdir(data_path + '//' + f'{field}.csv')
-                    os.chdir(data_path)
-                return final_data.to_csv(data_path, header=True)
-        extraction(data_path, field)
+                return final_data.to_csv(r'C:\Users\siri sagi\PycharmProjects\ps-energy-dl\data_folder\csv_file.csv', header=True)
+        extraction(data_path)
 
 # C:\Users\sirisagi\PycharmProjects\ps - energy - dl\data_folder\hebron.csv
