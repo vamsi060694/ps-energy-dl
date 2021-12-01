@@ -1,31 +1,31 @@
 import os
-from os.path import basename
-import logging
-import camelot
-from dotenv import load_dotenv
-import requests
-from bs4 import BeautifulSoup
-import datetime as dt
-import json
-import sqlalchemy
 import pandas as pd
-from app.etl.logging_init import init_logger
-from app.utils.etl_utils import etl_utils as et
-
-
-load_dotenv()
-
-logger = init_logger()
-
+from app.etl.Downloading_the_data_files import providing_path
+from app.etl.extraction import extraction
+from app.etl.transform_data import transforming_data
+from app.utils.logging_init import init_logger
+import json
+import logging
 
 filters = os.getenv('REFERENCE').split(',')
 folder_path = os.getenv('FOLDER_PATH')
-data_path = os.path.join(folder_path + '\\' + '../../data_folder')
-fields = os.getenv('FOLDERS').split(',')
-field = json.loads(os.getenv('FIELDS'))[filter]
-et.all_years(data_path, field)
+data_path = os.path.join(folder_path + '//' + 'data_folder')
+init_logger()
+units_data = pd.read_csv(r'C:\Users\siri sagi\PycharmProjects\ps-energy-dl\units.csv', header=0, sep=',')
+product_data = pd.read_csv(r'C:\Users\siri sagi\PycharmProjects\ps-energy-dl\energy.csv', header=0, sep=',')
 
-et.providing_path(filters)
-new_tables = et.extraction(data_path)
 
-et.transforming_data(data_path)
+def data_inserted():
+    try:
+        providing_path(filters, data_path)
+        for filter in filters:
+            field = json.loads(os.getenv('FIELDS'))[filter]
+            for item in field:
+                transform_path = extraction(data_path)
+                transforming_data(transform_path, product_data, units_data)
+    except Exception as e:
+        logging.error(e)
+
+
+if __name__ == '__main__':
+    data_inserted()
