@@ -21,7 +21,7 @@ def data_inserted():
         for filter in filters:
             field = json.loads(os.getenv('FIELDS'))[filter]
             for item in field:
-                transform_path = extraction(data_path, item)
+                transform_path = extraction(data_path)
                 transforming_data(transform_path, product_data, units_data)
     except Exception as e:
         logging.error(e)
