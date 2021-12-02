@@ -5,16 +5,16 @@ import logging
 from app.etl.extraction import extraction, data_path, field, transform_path
 init_logger()
 
-transform_path = extraction(data_path, field, transform_path)
+extracted_data = extraction(data_path, field, transform_path)
 
 
-def transforming_data(transform_path):
+def transforming_data(extracted_data):
     try:
         units_table = lookup_tables.get_unitof_measure()
         energy_product_table = lookup_tables.get_energy_units()
         well_lookup_df = lookup_tables.get_all_wellids()
-        transform_path.columns = ['well_name', 'Month', 'crude_oil(m3)', 'natural_gas(km3)', 'other(m3)']
-        transpose_data = pd.melt(transform_path, id_vars=['well_name', 'Month'],
+        extracted_data.columns = ['well_name', 'Month', 'crude_oil(m3)', 'natural_gas(km3)', 'other(m3)']
+        transpose_data = pd.melt(extracted_data, id_vars=['well_name', 'Month'],
                                  value_vars=['crude_oil(m3)', 'natural_gas(km3)', 'other(m3)'], var_name='Comodity',
                                  value_name='Value')
         transpose_data[['energy', 'units']] = transpose_data['Comodity'].str.split('(', expand=True)
