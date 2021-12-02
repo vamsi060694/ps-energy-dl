@@ -18,13 +18,12 @@ def data_insert():
         for filter in filters:
             fields = list(json.loads(os.getenv('FIELDS'))[filter])
             for field in fields:
-                extraction(data_path)
-                extraction['Field Name'] = field
+                extracted_data = extraction(data_path)
+                extracted_data['Field Name'] = field
                 lookup_tables.update_fields_table(field)
-                well_df = extraction[['Well Name', 'Field Name']]
-
+                well_df = extracted_data[['Well Name', 'Field Name']]
                 lookup_tables.update_well_lookup_table(well_df, field)
-                transformed_data = transforming_data(transform_path)
+                transformed_data = transforming_data(extracted_data)
                 production_table_data.production_update_table(transformed_data)
     except Exception as e:
         logging.error(e)
