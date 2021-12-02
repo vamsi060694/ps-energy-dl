@@ -9,12 +9,11 @@ from app.utils.logging_init import init_logger
 load_dotenv()
 
 logger = init_logger()
+filters = os.getenv('REFERENCE').split(',')
 folder_path = os.getenv('FOLDER_PATH')
 data_path = os.path.join(folder_path + '//' + 'data_folder')
-filters = os.getenv('REFERENCE').split(',')
 
-
-# transform_path = r'C:\Users\siri sagi\PycharmProjects\ps-energy-dl\data_folder\csv_file.csv'
+transform_path = 'C:/Users/siri sagi/PycharmProjects/ps-energy-dl/data_folder/csv_file.csv'
 
 def pre_cleaning(new_tables):
     if len(new_tables.columns) == 7:
@@ -44,52 +43,51 @@ def final_cleaning(sample_df):
 
 for filter in filters:
     field = json.loads(os.getenv('FIELDS'))[filter]
-    for item in field:
 
-        def extraction(data_path):
-            final_data = pd.DataFrame()
-            for path, dirs, files in os.walk(data_path):
-                for file in files:
-                    filename = os.path.join(path, file)
-                    tables = camelot.read_pdf(filename, pages='all', flavor='stream', edge_tol=1000)
-                    table_number = tables.n
-                    all_tables = pd.DataFrame()
+    def extraction(data_path, field, transform_path):
+        final_data = pd.DataFrame()
+        for path, dirs, files in os.walk(f'{data_path}/{field}'):
+            for file in files:
+                filename = os.path.join(path, file)
+                tables = camelot.read_pdf(filename, pages='all', flavor='stream', edge_tol=1000)
+                table_number = tables.n
+                all_tables = pd.DataFrame()
 
-                    for table in range(table_number):
-                        temp_df = tables[table].df
-                        column_len = len(temp_df.columns)
-                        if column_len == 6:
-                            try:
-                                temp_df.columns = ['Well Name', 'Year', 'Month', 'Oil_(m³)', 'Gas_(10³m³)', 'Water_(m³)']
-                                all_tables = pd.concat([all_tables, temp_df])
-                                all_tables = all_tables[~all_tables['Well Name'].str.contains('Well Name')]
-                            except Exception as e:
-                                logger.error(e)
-                        elif column_len == 5:
-                            try:
-                                temp_df['Well Name'] = np.NAN
-                                temp_df.columns = ['Well Name', 'Year', 'Month', 'Oil_(m³)', 'Gas_(10³m³)', 'Water_(m³)']
-                                all_tables = pd.concat([all_tables, temp_df])
-                                all_tables = all_tables[~all_tables['Well Name'].str.contains('Well Name')]
-                            except Exception as e:
-                                logger.error(e)
-                        else:
-                            try:
-                                temp_df.columns = ['Well Name', 'Year', 'Month', 'Total', 'Oil_(m³)', 'Gas_(10³m³)',
-                                                   'Water_(m³)']
-                                all_tables = pd.concat([all_tables, temp_df])
-                                all_tables = all_tables[~all_tables['Well Name'].str.contains('Well Name')]
-                            except Exception as e:
-                                logger.error(e)
-                    pre_cleaning_data = pre_cleaning(all_tables)
-                    final_cleaning_data = final_cleaning(pre_cleaning_data)
-                    final_cleaning_data = final_cleaning_data[~final_cleaning_data['Month'].str.contains("Yearly")]
-                    final_cleaning_data['Month'] = pd.to_datetime(final_cleaning_data[['Month', 'Year']].assign(DAY=1))
-                    final_cleaning_data = final_cleaning_data.drop(columns='Year', axis=1)
-                    cleaning_data = final_cleaning_data
-                    print(cleaning_data)
-                    final_data = pd.concat([final_data, cleaning_data])
-                return final_data.to_csv(r'C:\Users\siri sagi\PycharmProjects\ps-energy-dl\data_folder\csv_file.csv', header=True)
-        extraction(data_path)
+                for table in range(table_number):
+                    temp_df = tables[table].df
+                    column_len = len(temp_df.columns)
+                    if column_len == 6:
+                        try:
+                            temp_df.columns = ['Well Name', 'Year', 'Month', 'Oil_(m³)', 'Gas_(10³m³)', 'Water_(m³)']
+                            all_tables = pd.concat([all_tables, temp_df])
+                            all_tables = all_tables[~all_tables['Well Name'].str.contains('Well Name')]
+                        except Exception as e:
+                            logger.error(e)
+                    elif column_len == 5:
+                        try:
+                            temp_df['Well Name'] = np.NAN
+                            temp_df.columns = ['Well Name', 'Year', 'Month', 'Oil_(m³)', 'Gas_(10³m³)', 'Water_(m³)']
+                            all_tables = pd.concat([all_tables, temp_df])
+                            all_tables = all_tables[~all_tables['Well Name'].str.contains('Well Name')]
+                        except Exception as e:
+                            logger.error(e)
+                    else:
+                        try:
+                            temp_df.columns = ['Well Name', 'Year', 'Month', 'Total', 'Oil_(m³)', 'Gas_(10³m³)',
+                                               'Water_(m³)']
+                            all_tables = pd.concat([all_tables, temp_df])
+                            all_tables = all_tables[~all_tables['Well Name'].str.contains('Well Name')]
+                        except Exception as e:
+                            logger.error(e)
+                pre_cleaning_data = pre_cleaning(all_tables)
+                final_cleaning_data = final_cleaning(pre_cleaning_data)
+                final_cleaning_data = final_cleaning_data[~final_cleaning_data['Month'].str.contains("Yearly")]
+                final_cleaning_data['Month'] = pd.to_datetime(final_cleaning_data[['Month', 'Year']].assign(DAY=1))
+                final_cleaning_data = final_cleaning_data.drop(columns='Year', axis=1)
+                cleaning_data = final_cleaning_data
+                print(cleaning_data)
+                final_data = pd.concat([final_data, cleaning_data])
+            return final_data.to_csv(transform_path, header=True)
 
-# C:\Users\sirisagi\PycharmProjects\ps - energy - dl\data_folder\hebron.csv
+    extraction(data_path, field, transform_path)
+
