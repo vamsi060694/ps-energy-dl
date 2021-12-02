@@ -6,29 +6,23 @@ import sqlalchemy
 logger = init_logger()
 
 
-def update_well_lookup_table(well_names, field):
-    # Updating well lookup table
+def update_well_table(well_names, field):
     try:
-        wells_df = well_names.drop_duplicates(subset=['Well Name'], ignore_index=True)
-        # Mapping field_id for well lookup table FK reference
+        wells_list = well_names.drop_duplicates(subset=['Well Name'], ignore_index=True)
         fields = fieldsdb_df()
-        wells_df['field_id'] = wells_df['Field Name'].map(fields.set_index('field_name')['id'])
-        wells_df = wells_df.drop(columns='Field Name')
+        wells_list['field_id'] = wells_list['Field Name'].map(fields.set_index('field_name')['id'])
+        wells_list = wells_list.drop(columns='Field Name')
         fields_df_q = fields[fields['field_name'] == field]['id'].values[0]
 
-        wells_df = wells_df[['Well Name', 'field_id']]
-        wells_df.columns = ['well_name', 'field_id']
-        # Added flag file for all input values
-        wells_df['flag'] = "file"
+        wells_list = wells_list[['Well Name', 'field_id']]
+        wells_list.columns = ['well_name', 'field_id']
+        wells_list['flag'] = "file"
 
-        wellsdb_check_df = get_wellids(fields_df_q)
+        wellsdb_check_df = get_well_ids(fields_df_q)
         wellsdb_check_df = wellsdb_check_df[['well_name', 'field_id']]
-        # Added flag db which were read from database
         wellsdb_check_df['flag'] = 'db'
-        # Dropping the duplicate well names
-        well_filter_names = pd.concat([wells_df, wellsdb_check_df]).drop_duplicates(subset=['well_name', 'field_id'],
-                                                                                    keep=False)
-        # Taking the well names left with file flag after dropping duplicate well names
+        well_filter_names = pd.concat([wells_list, wellsdb_check_df]).drop_duplicates(subset=['well_name', 'field_id'],
+                                                                                      keep=False)
         well_filter_names = well_filter_names[well_filter_names['flag'] == 'file']
         well_filter_names = well_filter_names.drop(columns=['flag'])
         logger.info("Number of new wellnames into lookup table {}".format(len(well_filter_names)))
@@ -53,8 +47,7 @@ def update_well_lookup_table(well_names, field):
         logger.error(e)
 
 
-def get_wellids(field_id):
-    # Reading well lookup table based on field_id
+def get_well_ids(field_id):
     try:
         conn = db_connection()
 
@@ -67,7 +60,6 @@ def get_wellids(field_id):
 
 
 def get_all_wellids():
-    # Reading all wells from well lookup table
     try:
         conn = db_connection()
 
@@ -85,7 +77,6 @@ def update_fields_table(fieldname):
         conn = db_connection()
         sql = 'select * from collections.tbl_cnlopb_fields'
         field_table = pd.read_sql(sql=sql, con=conn)
-        # Checking the field is new or already exists in the fields lookup table
         if fieldname in list(field_table.field_name.values):
             logger.info("{} field is already there".format(fieldname))
         else:
@@ -97,7 +88,6 @@ def update_fields_table(fieldname):
 
 
 def fieldsdb_df():
-    # Reading fields lookup table
     try:
         conn = db_connection()
         sql = 'select ID, field_name from collections.tbl_cnlopb_fields'
@@ -109,7 +99,6 @@ def fieldsdb_df():
 
 
 def get_energy_units():
-    # Reading metadata energy product table
     try:
         conn = db_connection()
 
@@ -121,8 +110,7 @@ def get_energy_units():
     return tbl_energy_product_df
 
 
-def get_unitof_measure():
-    # Reading metadata unit table
+def get_unit_of_measure():
     try:
         conn = db_connection()
 

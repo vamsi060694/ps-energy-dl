@@ -38,49 +38,49 @@ def all_years(data_path, field, sources, url):
             logging.error(e)
 
 
-def providing_path(filters, data_path):
+def pdf_links(url):
+    try:
+        response = requests.get(url)
+        soup = BeautifulSoup(response.text, 'html.parser')
+
+        websites = []
+        for link in soup.find_all('a'):
+            if 'pdf' in link['href']:
+                websites.append(link.get('href'))
+        return websites
+    except Exception as e:
+        logging.error(e)
+
+
+def creating_folder(data_path):
+    try:
+        if not os.path.isdir(data_path):
+            os.mkdir('../../data_folder')
+    except Exception as e:
+        logging.error(e)
+
+
+def creating_fields(data_path, field):
+    try:
+        if not os.path.isdir(data_path + '//' + field):
+            os.mkdir(field)
+        os.chdir(data_path + '//' + field)
+        print(">>", os.getcwd())
+    except Exception as e:
+        logging.error(e)
+
+
+def downloading_src_files(filters, data_path):
     for filter in filters:
         try:
             url = f'https://www.cnlopb.ca/wp-content/uploads/{filter}'
 
-            def pdf_links(url):
-                try:
-                    response = requests.get(url)
-                    soup = BeautifulSoup(response.text, 'html.parser')
-
-                    websites = []
-                    for link in soup.find_all('a'):
-                        if 'pdf' in link['href']:
-                            websites.append(link.get('href'))
-                    return websites
-                except Exception as e:
-                    logging.error(e)
-
             sources = pdf_links(url)
-            print(sources)
-
-            def creating_folder(data_path):
-                try:
-                    if not os.path.isdir(data_path):
-                        os.mkdir('../../data_folder')
-                except Exception as e:
-                    logging.error(e)
-
             creating_folder(data_path)
 
             field = json.loads(os.getenv('FIELDS'))[filter]
             # field = fields[filter]
-            print("===>", field)
             os.chdir(data_path)
-
-            def creating_fields(data_path, field):
-                try:
-                    if not os.path.isdir(data_path + '//' + field):
-                        os.mkdir(field)
-                    os.chdir(data_path + '//' + field)
-                    print(">>", os.getcwd())
-                except Exception as e:
-                    logging.error(e)
 
             creating_fields(data_path, field)
             all_years(data_path, field, sources, url)
@@ -90,4 +90,4 @@ def providing_path(filters, data_path):
             logging.error(e)
 
 
-providing_path(filters, data_path)
+downloading_src_files(filters, data_path)

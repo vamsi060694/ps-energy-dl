@@ -5,15 +5,13 @@ import pandas as pd
 import numpy as np
 import json
 from app.utils.logging_init import init_logger
+from app.etl.Downloading_the_data_files import data_path, filters
 
 load_dotenv()
 
 logger = init_logger()
-filters = os.getenv('REFERENCE').split(',')
-folder_path = os.getenv('FOLDER_PATH')
-data_path = os.path.join(folder_path + '//' + 'data_folder')
-
 transform_path = 'C:/Users/siri sagi/PycharmProjects/ps-energy-dl/data_folder/csv_file.csv'
+
 
 def pre_cleaning(new_tables):
     if len(new_tables.columns) == 7:
@@ -87,7 +85,7 @@ for filter in filters:
                 cleaning_data = final_cleaning_data
                 print(cleaning_data)
                 final_data = pd.concat([final_data, cleaning_data])
-            return final_data.to_csv(transform_path, header=True)
+            return final_data
 
     extraction(data_path, field, transform_path)
 

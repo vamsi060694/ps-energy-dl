@@ -1,11 +1,11 @@
 from app.utils.db_connectivity import db_connection
 from app.utils.logging_init import init_logger
-from app.etl.transform_data import transforming_data, transform_path
+from app.etl.transform_data import transforming_data, extracted_data
 import sqlalchemy
 
 logger = init_logger()
 
-transpose_data = transforming_data(transform_path)
+transpose_data = transforming_data(extracted_data)
 
 
 def production_update_table(transpose_data):

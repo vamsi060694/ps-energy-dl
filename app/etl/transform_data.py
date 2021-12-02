@@ -10,7 +10,7 @@ extracted_data = extraction(data_path, field, transform_path)
 
 def transforming_data(extracted_data):
     try:
-        units_table = lookup_tables.get_unitof_measure()
+        units_table = lookup_tables.get_unit_of_measure()
         energy_product_table = lookup_tables.get_energy_units()
         well_lookup_df = lookup_tables.get_all_wellids()
         extracted_data.columns = ['well_name', 'Month', 'crude_oil(m3)', 'natural_gas(km3)', 'other(m3)']
