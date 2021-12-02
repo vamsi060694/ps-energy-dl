@@ -2,10 +2,7 @@ import pandas as pd
 from app.utils.logging_init import init_logger
 from app.etl import lookup_tables
 import logging
-from app.etl.extraction import extraction, data_path, field, transform_path
-init_logger()
-
-extracted_data = extraction(data_path, field, transform_path)
+logger = init_logger()
 
 
 def transforming_data(extracted_data):
@@ -22,9 +19,8 @@ def transforming_data(extracted_data):
         transpose_data['energy_product_id'] = transpose_data.energy.str.lower().map(energy_product_table.set_index('energy_product')['id'])
         transpose_data['energy_unit_id'] = transpose_data.units.str.lower().map(units_table.set_index('uom')['unit_of_measure_id'])
         transpose_data['well_id'] = transpose_data.well_name.map(well_lookup_df.set_index('well_name')['id'])
-        transpose_data['month'] = transpose_data['month'].dt.strftime('%Y-%m-%d')
-        transpose_data['value'] = transpose_data['value'].str.replace(',', '').astype(float)
         transpose_data = transpose_data.drop(['energy', 'units', 'Commodity', 'well_name'], axis=1)
+        logger.info("Able to transform the data in the required format")
         return transpose_data
     except Exception as e:
         logging.error(e)

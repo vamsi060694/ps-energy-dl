@@ -1,3 +1,4 @@
+import logging
 import os
 from dotenv import load_dotenv
 import camelot
@@ -5,12 +6,10 @@ import pandas as pd
 import numpy as np
 import json
 from app.utils.logging_init import init_logger
-from app.etl.Downloading_the_data_files import data_path, filters
 
 load_dotenv()
 
 logger = init_logger()
-transform_path = 'C:/Users/siri sagi/PycharmProjects/ps-energy-dl/data_folder/csv_file.csv'
 
 
 def pre_cleaning(new_tables):
@@ -18,6 +17,7 @@ def pre_cleaning(new_tables):
         try:
             new_tables.set_index('Total').filter(like='Yearly', axis=0)
             new_tables = new_tables.drop('Total', axis=1)
+
         except Exception as e:
             logger.error(e)
     else:
@@ -39,10 +39,8 @@ def final_cleaning(sample_df):
         logger.error(e)
 
 
-for filter in filters:
-    field = json.loads(os.getenv('FIELDS'))[filter]
-
-    def extraction(data_path, field, transform_path):
+def extracted_data_files(data_path, field):
+    try:
         final_data = pd.DataFrame()
         for path, dirs, files in os.walk(f'{data_path}/{field}'):
             for file in files:
@@ -83,9 +81,8 @@ for filter in filters:
                 final_cleaning_data['Month'] = pd.to_datetime(final_cleaning_data[['Month', 'Year']].assign(DAY=1))
                 final_cleaning_data = final_cleaning_data.drop(columns='Year', axis=1)
                 cleaning_data = final_cleaning_data
-                print(cleaning_data)
                 final_data = pd.concat([final_data, cleaning_data])
+                logger.info("Able to to extract and clean the files")
             return final_data
-
-    extraction(data_path, field, transform_path)
-
+    except Exception as e:
+        logging.error(e)

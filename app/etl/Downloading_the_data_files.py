@@ -6,12 +6,10 @@ from bs4 import BeautifulSoup
 import datetime as dt
 import json
 import logging
+from app.utils.logging_init import init_logger
 
+logger = init_logger()
 load_dotenv()
-
-filters = os.getenv('REFERENCE').split(',')
-folder_path = os.getenv('FOLDER_PATH')
-data_path = os.path.join(folder_path + '//' + 'data_folder')
 
 
 def all_years(data_path, field, sources, url):
@@ -23,6 +21,8 @@ def all_years(data_path, field, sources, url):
                 req = requests.get(f'{url}/{source}')
                 with open(basename(f'{data_path}//{field}//{source}'), 'wb') as file:
                     file.write(req.content)
+            logger.info("Able to download the required files of all the years")
+
         except Exception as e:
             logging.error(e)
 
@@ -34,6 +34,7 @@ def all_years(data_path, field, sources, url):
                     req = requests.get(f'{url}/{source}')
                     with open(basename(f'{data_path}//{field}//{source}'), 'wb') as file:
                         file.write(req.content)
+            logger.info("Able to download the files of the current year")
         except Exception as e:
             logging.error(e)
 
@@ -47,25 +48,27 @@ def pdf_links(url):
         for link in soup.find_all('a'):
             if 'pdf' in link['href']:
                 websites.append(link.get('href'))
+            logger.info("Able to extract the required pdf file links")
         return websites
     except Exception as e:
         logging.error(e)
 
 
-def creating_folder(data_path):
+def creating_base_path(data_path):
     try:
         if not os.path.isdir(data_path):
-            os.mkdir('../../data_folder')
+            os.mkdir(f'{data_path}')
+        logger.info("Able to create the data folder")
     except Exception as e:
         logging.error(e)
 
 
-def creating_fields(data_path, field):
+def creating_fields_name_path(data_path, field):
     try:
-        if not os.path.isdir(data_path + '//' + field):
+        if not os.path.isdir(f'{data_path}/{field}'):
             os.mkdir(field)
         os.chdir(data_path + '//' + field)
-        print(">>", os.getcwd())
+        logger.info("Able to create the folders with field names")
     except Exception as e:
         logging.error(e)
 
@@ -76,18 +79,16 @@ def downloading_src_files(filters, data_path):
             url = f'https://www.cnlopb.ca/wp-content/uploads/{filter}'
 
             sources = pdf_links(url)
-            creating_folder(data_path)
+            creating_base_path(data_path)
 
             field = json.loads(os.getenv('FIELDS'))[filter]
             # field = fields[filter]
             os.chdir(data_path)
 
-            creating_fields(data_path, field)
+            creating_fields_name_path(data_path, field)
             all_years(data_path, field, sources, url)
             os.chdir(data_path)
-
+            logger.info("Able to download the required pdf files")
         except Exception as e:
             logging.error(e)
 
-
-downloading_src_files(filters, data_path)
