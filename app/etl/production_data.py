@@ -8,7 +8,6 @@ logger = init_logger()
 def production_update_table(transpose_data):
     # updating production lookup table
     try:
-        print(transpose_data.dtypes)
         conn = db_connection()
         transpose_data.to_sql(
             'tbl_cnlopb_production',
@@ -22,8 +21,8 @@ def production_update_table(transpose_data):
                    "unit_of_measure_id": sqlalchemy.types.INT,
                    "month": sqlalchemy.types.DATE,
                    "value": sqlalchemy.types.FLOAT(),
-                   "field_id": sqlalchemy.types.CHAR(length=5)
                    }
         )
+        logger.info("successfully inserted data")
     except Exception as e:
         logger.error(e)
