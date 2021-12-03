@@ -1,6 +1,6 @@
 import os
 from app.etl import lookup_tables, production_data
-from app.etl.Downloading_the_data_files import downloading_src_files
+from app.etl.downloading_the_data_files import downloading_src_files
 from app.etl.extraction import extracted_data_files
 from app.etl.transform_data import transforming_data
 from app.utils.logging_init import init_logger
@@ -27,7 +27,6 @@ def data_insert():
             extracted_data = extracted_data.drop(columns=['Field Name'])
             transformed_data = transforming_data(extracted_data)
             production_data.production_update_table(transformed_data)
-            logger.info("Able to load the required files to database")
     except Exception as e:
         logging.error(e)
 

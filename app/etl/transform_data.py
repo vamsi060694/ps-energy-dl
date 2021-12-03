@@ -21,7 +21,7 @@ def transforming_data(cleaned_data):
         transpose_data['month'] = transpose_data['month'].dt.strftime('%Y-%m-%d')
         transpose_data['value'] = transpose_data['value'].str.replace(',', '').astype(float)
         transpose_data = transpose_data.drop(['energy', 'units', 'Comodity', 'well_name'], axis=1)
-        logger.info("Able to transform the data in the required format")
+        logger.info("Successfully transformed the data in the required format")
         return transpose_data
     except Exception as e:
         logging.error(e)

@@ -21,7 +21,7 @@ def all_years(data_path, field, sources, url):
                 req = requests.get(f'{url}/{source}')
                 with open(basename(f'{data_path}//{field}//{source}'), 'wb') as file:
                     file.write(req.content)
-            logger.info("Able to download the required files of all the years")
+            logger.info("Successfully downloaded the required files of all the years")
 
         except Exception as e:
             logging.error(e)
@@ -34,7 +34,7 @@ def all_years(data_path, field, sources, url):
                     req = requests.get(f'{url}/{source}')
                     with open(basename(f'{data_path}//{field}//{source}'), 'wb') as file:
                         file.write(req.content)
-            logger.info("Able to download the files of the current year")
+            logger.info("Successfully downloaded the files of the current year")
         except Exception as e:
             logging.error(e)
 
@@ -48,7 +48,6 @@ def pdf_links(url):
         for link in soup.find_all('a'):
             if 'pdf' in link['href']:
                 websites.append(link.get('href'))
-            logger.info("Able to extract the required pdf file links")
         return websites
     except Exception as e:
         logging.error(e)
@@ -58,7 +57,6 @@ def creating_base_path(data_path):
     try:
         if not os.path.isdir(data_path):
             os.mkdir(f'{data_path}')
-        logger.info("Able to create the data folder")
     except Exception as e:
         logging.error(e)
 
@@ -68,7 +66,6 @@ def creating_fields_name_path(data_path, field):
         if not os.path.isdir(f'{data_path}/{field}'):
             os.mkdir(field)
         os.chdir(data_path + '//' + field)
-        logger.info("Able to create the folders with field names")
     except Exception as e:
         logging.error(e)
 
@@ -88,7 +85,6 @@ def downloading_src_files(filters, data_path):
             creating_fields_name_path(data_path, field)
             all_years(data_path, field, sources, url)
             os.chdir(data_path)
-            logger.info("Able to download the required pdf files")
         except Exception as e:
             logging.error(e)
 

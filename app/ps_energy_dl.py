@@ -1,8 +1,8 @@
-from app.etl import development
+from app.etl import data_loader
 
 
 def main():
-    development.data_insert()
+    data_loader.data_insert()
 
 
 if __name__ == '__main__':

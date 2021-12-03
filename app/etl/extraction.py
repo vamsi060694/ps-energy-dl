@@ -82,7 +82,7 @@ def extracted_data_files(data_path, field):
                 final_cleaning_data = final_cleaning_data.drop(columns='Year', axis=1)
                 cleaning_data = final_cleaning_data
                 final_data = pd.concat([final_data, cleaning_data])
-                logger.info("Able to to extract and clean the files")
+                logger.info(f"Successfully extracted and cleaned the pdf files of {field}")
             return final_data
     except Exception as e:
         logging.error(e)
