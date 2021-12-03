@@ -6,7 +6,6 @@ logger = init_logger()
 
 
 def production_update_table(transpose_data):
-    # updating production lookup table
     try:
         conn = db_connection()
         transpose_data.to_sql(
@@ -20,7 +19,7 @@ def production_update_table(transpose_data):
                    "energy_product_id": sqlalchemy.types.INT,
                    "unit_of_measure_id": sqlalchemy.types.INT,
                    "month": sqlalchemy.types.DATE,
-                   "value": sqlalchemy.types.FLOAT(),
+                   "value": sqlalchemy.types.FLOAT()
                    }
         )
         logger.info("successfully inserted data")

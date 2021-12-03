@@ -116,7 +116,7 @@ def get_unit_of_measure():
 
         sql = 'select id,unit_short from metadata.tbl_unit'
         tbl_uom_df = pd.read_sql(con=conn, sql=sql)
-        tbl_uom_df.columns = ['unit_of_measure_id','uom']
+        tbl_uom_df.columns = ['unit_of_measure_id', 'uom']
         logger.info("Returned the units energy_etl ")
     except Exception as e:
         logger.error(e)

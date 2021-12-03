@@ -15,9 +15,11 @@ def transforming_data(cleaned_data):
                                  value_vars=['crude_oil(m3)', 'natural_gas(km3)', 'other(m3)'], var_name='Comodity')
         transpose_data[['energy', 'units']] = transpose_data['Comodity'].str.split('(', expand=True)
         transpose_data['units'] = transpose_data['units'].str.replace('[)]', '', regex=True)
-        transpose_data['energy_product_id'] = transpose_data.energy.str.lower().map(energy_product_table.set_index('energy_product')['id'])
+        transpose_data['energy_product_id'] = transpose_data.energy.str.lower().map(energy_product_table.set_index('energy_product')['ID'])
         transpose_data['unit_of_measure_id'] = transpose_data.units.str.lower().map(units_table.set_index('uom')['unit_of_measure_id'])
         transpose_data['well_id'] = transpose_data.well_name.map(well_lookup_df.set_index('well_name')['id'])
+        transpose_data['month'] = transpose_data['month'].dt.strftime('%Y-%m-%d')
+        transpose_data['value'] = transpose_data['value'].str.replace(',', '').astype(float)
         transpose_data = transpose_data.drop(['energy', 'units', 'Comodity', 'well_name'], axis=1)
         logger.info("Able to transform the data in the required format")
         return transpose_data
